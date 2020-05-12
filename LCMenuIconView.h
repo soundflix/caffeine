@@ -28,7 +28,7 @@
 	id target;
 }
 
-@property(setter=setActive) BOOL isActive;
+@property(setter = setActive:) BOOL isActive;
 @property(retain) NSStatusItem *statusItem;
 @property(retain) NSMenu *menu;
 @end

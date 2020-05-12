@@ -2,8 +2,6 @@
 //  LCMenuIconView.m
 //  Caffeine
 //
-//  Created by Tomas Franzén on 2009-09-04.
-//  Copyright 2009 Lighthead Software. All rights reserved.
 //
 
 #import "LCMenuIconView.h"
@@ -14,22 +12,31 @@
 
 - (id)initWithFrame:(NSRect)r {
 	[super initWithFrame:r];
-	activeImage = [[NSImage imageNamed:@"active"] retain];
-	inactiveImage = [[NSImage imageNamed:@"inactive"] retain];
-	
-	highlightImage = [[NSImage imageNamed:@"highlighted"] retain];
-	highlightActiveImage = [[NSImage imageNamed:@"highlightactive"] retain];
 	return self;
 }
 
 
+
 - (void)drawRect:(NSRect)r {
+    activeImage = [[NSImage imageNamed:@"active"] retain];
+    inactiveImage = [[NSImage imageNamed:@"inactive"] retain];
+    
+    // Invert icons if in dark mode
+    NSString *mode = [[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"];
+    if([mode isEqualToString: @"Dark"]) {
+        activeImage = [[NSImage imageNamed:@"highlightactive"] retain];
+        inactiveImage = [[NSImage imageNamed:@"highlighted"] retain];
+    }
+    
+    highlightImage = [[NSImage imageNamed:@"highlighted"] retain];
+    highlightActiveImage = [[NSImage imageNamed:@"highlightactive"] retain];
+    
 	NSImage *i = isActive ? activeImage : inactiveImage;
 	if(menuIsShown) i = isActive ? highlightActiveImage : highlightImage;
 	NSRect f = [self bounds];
 	NSPoint p = NSMakePoint(f.size.width/2 - [i size].width/2, f.size.height/2 - [i size].height/2 + 1);
 	
-	if(menuIsShown) [statusItem drawStatusBarBackgroundInRect:r withHighlight:YES];
+	[statusItem drawStatusBarBackgroundInRect:r withHighlight:menuIsShown];
 	[i drawAtPoint:p fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
 }
 

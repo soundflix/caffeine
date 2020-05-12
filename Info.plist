@@ -9,32 +9,34 @@
 	<key>CFBundleIconFile</key>
 	<string>Caffeine.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.lightheadsw.caffeine</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1.3</string>
 	<key>CFBundleSignature</key>
 	<string>LCaf</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.2</string>
+	<string>1.1.3</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.6</string>
+	<key>LSUIElement</key>
+	<string>1</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Caffeine requires this permission to be able to keep your computer awake while it is active.</string>
+	<key>NSAppleScriptEnabled</key>
+	<string>YES</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>LSUIElement</key>
-	<string>1</string>
-	<key>NSAppleScriptEnabled</key>
-	<string>YES</string>
 	<key>OSAScriptingDefinition</key>
 	<string>Caffeine.sdef</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.6</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.1.2</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.utilities</string>
 </dict>
 </plist>

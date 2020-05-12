@@ -8,25 +8,26 @@
 
 #import "AppDelegate.h"
 #import <CoreServices/CoreServices.h>
-
+#import <ApplicationServices/ApplicationServices.h>
 
 @implementation AppDelegate
+
+# pragma mark - Initialization
 
 - (id)init {
 	[super init];
 	timer = [[NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(timer:) userInfo:nil repeats:YES] retain];
-	
+	webBaseURL = @"https://www.intelliscapesolutions.com/apps/caffeine";
+    config = [[CaffeineKeys alloc] init];
+    
 	// Workaround for a bug in Snow Leopard where Caffeine would prevent the computer from going to sleep when another account was active.
 	userSessionIsActive = YES;
 	[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(userSessionDidResignActive:) name:NSWorkspaceSessionDidResignActiveNotification object:nil];
 	[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(userSessionDidBecomeActive:) name:NSWorkspaceSessionDidBecomeActiveNotification object:nil];
-	
 	return self;
 }
 
-
 - (void)awakeFromNib {
-	
 	NSStatusItem *item = [[[NSStatusBar systemStatusBar] statusItemWithLength:30] retain];
 	menuView = [[LCMenuIconView alloc] initWithFrame:NSZeroRect];
 	[item setView:menuView];
@@ -34,36 +35,28 @@
 	[menuView setMenu:menu];
 	[menuView setAction:@selector(toggleActive:)];
 	
-	[[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:@"SuppressLaunchMessage"]];
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableDictionary * defaultValues = [NSMutableDictionary dictionary];
+    [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:@"SuppressLaunchMessage"];
+    [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:@"SendProblemReports"];
+	[defaults registerDefaults:defaultValues];
+    [defaults synchronize];
+    
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:@"SuppressLaunchMessage"]) {
+        [self showPreferences:nil];
+    }
 	
-	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"SuppressLaunchMessage"])
-		[self showPreferences:nil];
-	
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"ActivateOnLaunch"])
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"ActivateOnLaunch"]) {
 		[self toggleActive:nil];
-	
+    }
 }
 
-
-- (void)dealloc {
-	[timer invalidate];
-	[timer release];
-	[menuView release];
-	[timeoutTimer release];
-	[super dealloc];
-}
-
-
-- (BOOL)screensaverIsRunning {
-	NSString *activeAppID = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationBundleIdentifier"];
-	NSArray *bundleIDs = [NSArray arrayWithObjects:@"com.apple.ScreenSaver.Engine", @"com.apple.loginwindow", nil];
-	return activeAppID && [bundleIDs containsObject:activeAppID];
-}
-
-
-
+# pragma mark - Activation & Deactivation Methods
 
 - (void)activateWithTimeoutDuration:(NSTimeInterval)interval {
+    if(![self checkForAccessibilityPermission]) {
+        return;
+    };
 	if(timeoutTimer) [[timeoutTimer autorelease] invalidate];
 	timeoutTimer = nil;
 	if(interval > 0)
@@ -72,7 +65,7 @@
 	[menuView setActive:isActive];
 	
 	NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:interval ? interval : -1], @"duration", nil];
-	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"com.lightheadsw.caffeine.activation" object:nil userInfo:info];	
+	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"com.intelliscapesolutions.caffeine.activation" object:nil userInfo:info];
 }
 
 - (void)activate {
@@ -85,10 +78,8 @@
 	timeoutTimer = nil;
 	[menuView setActive:isActive];
 	
-	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"com.lightheadsw.caffeine.deactivation" object:nil userInfo:nil];
+	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"com.intelliscapesolutions.caffeine.deactivation" object:nil userInfo:nil];
 }
-
-
 
 - (IBAction)activateWithTimeout:(id)sender {
 	int minutes = [(NSMenuItem*)sender tag];
@@ -99,8 +90,6 @@
 	else
 		[self activate];
 }
-
-
 
 - (void)toggleActive:(id)sender {
 	if(timeoutTimer) [[timeoutTimer autorelease] invalidate];
@@ -119,7 +108,6 @@
 	}
 }
 
-
 - (void)timeoutReached:(NSTimer*)timer {
 	[self deactivate];
 }
@@ -128,31 +116,26 @@
 	return isActive;
 }
 
-- (void)userSessionDidResignActive:(NSNotification *)note {
-	userSessionIsActive = NO;
-}
-
-- (void)userSessionDidBecomeActive:(NSNotification *)note {
-	userSessionIsActive = YES;
-}
-
-- (IBAction)showAbout:(id)sender {
-	[NSApp activateIgnoringOtherApps:YES];
-	[NSApp orderFrontStandardAboutPanel:self];
-}
-
-- (IBAction)showPreferences:(id)sender {
-	[NSApp activateIgnoringOtherApps:YES];
-	[firstTimeWindow center];
-	[firstTimeWindow makeKeyAndOrderFront:sender];
-}
-
+# pragma mark - Core Functionality
 
 - (void)timer:(NSTimer*)timer {
 	if(isActive && ![self screensaverIsRunning] && userSessionIsActive)
 		UpdateSystemActivity(UsrActivity);
 }
 
+- (void)userSessionDidResignActive:(NSNotification *)note {
+    userSessionIsActive = NO;
+}
+
+- (void)userSessionDidBecomeActive:(NSNotification *)note {
+    userSessionIsActive = YES;
+}
+
+- (BOOL)screensaverIsRunning {
+    NSString *activeAppID = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationBundleIdentifier"];
+    NSArray *bundleIDs = [NSArray arrayWithObjects:@"com.apple.ScreenSaver.Engine", @"com.apple.loginwindow", nil];
+    return activeAppID && [bundleIDs containsObject:activeAppID];
+}
 
 - (LSSharedFileListItemRef)applicationItemInList:(LSSharedFileListRef)list {
 	NSString *appPath = [[NSBundle mainBundle] bundlePath];
@@ -171,7 +154,6 @@
 	CFRelease(items);
 	return NULL;
 }
-
 
 - (BOOL)startsAtLogin {
 	LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
@@ -228,6 +210,138 @@
 		[infoMenuItem setHidden:YES];
 		[infoSeparatorItem setHidden:YES];
 	}
+}
+
+# pragma mark - Application Lifecycle Events
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"SendProblemReports"]) {
+        // Sentry - Used for collecting crash reports & error statistics
+        NSError *error = nil;
+        SentryClient *client = [[SentryClient alloc] initWithDsn:config.sentryDSN didFailWithError:&error];
+        SentryClient.sharedClient = client;
+        [SentryClient.sharedClient startCrashHandlerWithError:&error];
+        if (nil != error) {
+            NSLog(@"%@", error);
+        }
+        
+        // Countly - Used for gathering anonymous metrics, such as OS version & device model
+        CountlyConfig* countly = CountlyConfig.new;
+        countly.appKey = config.countlyAppKey;
+        countly.host = config.countlyHost;
+        [Countly.sharedInstance startWithConfig:countly];
+    }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)aNotification {
+    [self checkForAccessibilityPermission];
+}
+
+# pragma mark - Accessibility Permissions
+
+-(BOOL)checkForAccessibilityPermission {
+    // Prompt for accessibility permissions on macOS Mojave and later.
+    if (@available(macOS 10.14, *)) {
+        NSDictionary *options = @{(id)kAXTrustedCheckOptionPrompt: @NO};
+        BOOL accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options);
+        if(!accessibilityEnabled) {
+            [self showAccessibilityPrompt:nil];
+            return NO;
+        }else{
+            if([accessibilityPermissionWindow isVisible]) {
+                [accessibilityPermissionWindow close];
+            }
+        }
+    }
+    return YES;
+}
+
+-(IBAction)showAccessibilityPrompt:(id)sender {
+    [NSApp activateIgnoringOtherApps:YES];
+    [accessibilityPermissionWindow center];
+    [accessibilityPermissionWindow setIsVisible:YES];
+    [accessibilityPermissionWindow makeKeyAndOrderFront:sender];
+}
+
+-(IBAction)launchSystemPreferences:(id)sender {
+    NSString *urlString = @"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility";
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
+}
+
+# pragma mark - Launch & About Windows
+
+- (IBAction)showAbout:(id)sender {
+    [NSApp activateIgnoringOtherApps:YES];
+    [NSApp orderFrontStandardAboutPanel:self];
+}
+
+- (IBAction)showPreferences:(id)sender {
+    [NSApp activateIgnoringOtherApps:YES];
+    [firstTimeWindow setBackgroundColor:[NSColor windowBackgroundColor]];
+    [firstTimeWindow center];
+    [firstTimeWindow makeKeyAndOrderFront:sender];
+}
+
+# pragma mark - Help & Feedback Window Utility Methods
+
+-(IBAction)launchHelpCenter:(id)sender {
+    [helpCenterWindow center];
+    [helpCenterWindow setIsVisible:YES];
+    [helpCenterWindow makeKeyAndOrderFront:nil];
+}
+
+-(IBAction)launchSupport:(id)sender {
+    [[NSWorkspace sharedWorkspace] openURL:
+     [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", webBaseURL, @"/support"]]];
+}
+
+-(IBAction)launchSupportAccessibility:(id)sender {
+    [[NSWorkspace sharedWorkspace] openURL:
+     [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", webBaseURL, @"/support/permissions"]]];
+}
+
+-(IBAction)launchFeedback:(id)sender {
+    NSURL *nsurl=[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", webBaseURL, @"/feedback"]];
+    if (NSClassFromString(@"WKWebView")) {
+        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
+        WKWebView *feedbackWebView = [[WKWebView alloc] initWithFrame:[[feedbackWindow contentView] frame]];
+        [feedbackWebView loadRequest:nsrequest];
+        [[feedbackWindow contentView] addSubview:feedbackWebView];
+        [feedbackWindow center];
+        [feedbackWindow setIsVisible:YES];
+        [feedbackWindow makeKeyAndOrderFront:nil];
+    }else{
+        [[NSWorkspace sharedWorkspace] openURL:nsurl];
+    }
+}
+
+-(IBAction)launchDonate:(id)sender {
+    NSURL *nsurl=[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", webBaseURL, @"/donate"]];
+    if (NSClassFromString(@"WKWebView")) {
+        NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];
+        WKWebView *donateWebView = [[WKWebView alloc] initWithFrame:[[donateWindow contentView] frame]];
+        [donateWebView loadRequest:nsrequest];
+        [[donateWindow contentView] addSubview:donateWebView];
+        [donateWindow center];
+        [donateWindow setIsVisible:YES];
+        [donateWindow makeKeyAndOrderFront:nil];
+    }else{
+        [[NSWorkspace sharedWorkspace] openURL:nsurl];
+    }
+}
+
+-(IBAction)showProblemReportInfoPopoverButton:(id)sender {
+    [problemReportInfoPopover showRelativeToRect:[sender bounds] ofView:sender preferredEdge:NSMinYEdge];
+}
+
+# pragma mark - Maintenance & Memory Management
+
+- (void)dealloc {
+    [timer invalidate];
+    [timer release];
+    [menuView release];
+    [timeoutTimer release];
+    [super dealloc];
 }
 
 @end
