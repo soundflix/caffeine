@@ -386,7 +386,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.intelliscapesolutions.caffeine;
 				PRODUCT_NAME = Caffeine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx10.14;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -408,7 +408,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.intelliscapesolutions.caffeine;
 				PRODUCT_NAME = Caffeine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx10.14;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -472,7 +472,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.intelliscapesolutions.caffeine;
 				PRODUCT_NAME = Caffeine;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx10.14;
+				SDKROOT = macosx;
 			};
 			name = "App Store Release";
 		};
