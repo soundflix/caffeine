@@ -21,7 +21,6 @@
 		E2DE1CB40A1F38A500997829 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2DE1CB20A1F38A500997829 /* Localizable.strings */; };
 		F730620623E7E7AE00983C47 /* ISToggleSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = F730620523E7E7AE00983C47 /* ISToggleSwitch.m */; };
 		F730620823E7FF8900983C47 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F70E67A323E7B8950060D10E /* WebKit.framework */; };
-		F79DB70821ACBF7F00CA9977 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F79DB70721ACBF7F00CA9977 /* ApplicationServices.framework */; };
 		F79DB71121ADE39D00CA9977 /* active.png in Resources */ = {isa = PBXBuildFile; fileRef = F79DB70921ADE39C00CA9977 /* active.png */; };
 		F79DB71221ADE39D00CA9977 /* highlightactive.png in Resources */ = {isa = PBXBuildFile; fileRef = F79DB70A21ADE39C00CA9977 /* highlightactive.png */; };
 		F79DB71321ADE39D00CA9977 /* inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = F79DB70B21ADE39C00CA9977 /* inactive.png */; };
@@ -60,7 +59,6 @@
 		F730620423E7E7AE00983C47 /* ISToggleSwitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISToggleSwitch.h; sourceTree = "<group>"; };
 		F730620523E7E7AE00983C47 /* ISToggleSwitch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISToggleSwitch.m; sourceTree = "<group>"; };
 		F730620923E8023F00983C47 /* Caffeine.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Caffeine.entitlements; sourceTree = "<group>"; };
-		F79DB70721ACBF7F00CA9977 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/ApplicationServices.framework; sourceTree = DEVELOPER_DIR; };
 		F79DB70921ADE39C00CA9977 /* active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = active.png; sourceTree = "<group>"; };
 		F79DB70A21ADE39C00CA9977 /* highlightactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = highlightactive.png; sourceTree = "<group>"; };
 		F79DB70B21ADE39C00CA9977 /* inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inactive.png; sourceTree = "<group>"; };
@@ -78,7 +76,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F730620823E7FF8900983C47 /* WebKit.framework in Frameworks */,
-				F79DB70821ACBF7F00CA9977 /* ApplicationServices.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				E2C559DB1050B7ED0087103D /* CoreServices.framework in Frameworks */,
 			);
@@ -179,7 +176,6 @@
 			children = (
 				F730620223E7E1A700983C47 /* AppKit.framework */,
 				F70E67A323E7B8950060D10E /* WebKit.framework */,
-				F79DB70721ACBF7F00CA9977 /* ApplicationServices.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
