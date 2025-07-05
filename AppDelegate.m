@@ -18,7 +18,7 @@
 	[super init];
 	timer = [[NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(timer:) userInfo:nil repeats:YES] retain];
 	webBaseURL = @"https://www.intelliscapesolutions.com/apps/caffeine";
-    config = [[CaffeineKeys alloc] init];
+//    config = [[CaffeineKeys alloc] init];
     
 	// Workaround for a bug in Snow Leopard where Caffeine would prevent the computer from going to sleep when another account was active.
 	userSessionIsActive = YES;
@@ -217,19 +217,19 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"SendProblemReports"]) {
         // Sentry - Used for collecting crash reports & error statistics
-        NSError *error = nil;
-        SentryClient *client = [[SentryClient alloc] initWithDsn:config.sentryDSN didFailWithError:&error];
-        SentryClient.sharedClient = client;
-        [SentryClient.sharedClient startCrashHandlerWithError:&error];
-        if (nil != error) {
-            NSLog(@"%@", error);
-        }
+//        NSError *error = nil;
+//        SentryClient *client = [[SentryClient alloc] initWithDsn:config.sentryDSN didFailWithError:&error];
+//        SentryClient.sharedClient = client;
+//        [SentryClient.sharedClient startCrashHandlerWithError:&error];
+//        if (nil != error) {
+//            NSLog(@"%@", error);
+//        }
         
         // Countly - Used for gathering anonymous metrics, such as OS version & device model
-        CountlyConfig* countly = CountlyConfig.new;
-        countly.appKey = config.countlyAppKey;
-        countly.host = config.countlyHost;
-        [Countly.sharedInstance startWithConfig:countly];
+//        CountlyConfig* countly = CountlyConfig.new;
+//        countly.appKey = config.countlyAppKey;
+//        countly.host = config.countlyHost;
+//        [Countly.sharedInstance startWithConfig:countly];
     }
 }
 

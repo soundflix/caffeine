@@ -10,9 +10,9 @@
 #import <WebKit/WebKit.h>
 #import "LCMenuIconView.h"
 #import "ISToggleSwitch.h"
-#import "Sentry/Sentry.h"
-#import "Countly.h"
-#import <Keys/CaffeineKeys.h>
+//#import "Sentry/Sentry.h"
+//#import "Countly.h"
+//#import <Keys/CaffeineKeys.h>
 
 // Workaround for bug in 64-bit SDK
 #ifndef __POWER__
@@ -51,7 +51,7 @@ extern OSErr UpdateSystemActivity(UInt8 activity);
     IBOutlet NSButton *problemReportInfoPopoverButton;
     
     NSString *webBaseURL;
-    CaffeineKeys *config;
+//    CaffeineKeys *config;
 }
 
 - (IBAction)showAbout:(id)sender;
